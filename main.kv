@@ -1,0 +1,209 @@
+#:kivy 2.3.1
+
+ScreenManager:
+    LoginScreen:
+        name: "login"
+    RegisterScreen:
+        name: "register"
+    ForgotPasswordScreen:
+        name: "forgot"
+    MenuScreen:
+        name: "menu"
+    AddBalanceScreen:
+        name: "add"
+    TransferScreen:
+        name: "transfer"
+    HistoryScreen:
+        name: "history"
+
+<LoginScreen>:
+    FloatLayout:
+        Label:
+            text: "Finance Tracker Login"
+            font_size: 26
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: 0.5, 0.4
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 10
+            TextInput:
+                id: login_username
+                hint_text: "Username"
+                multiline: False
+                size_hint_y: None
+                height: 40
+            TextInput:
+                id: login_password
+                hint_text: "Password"
+                password: True
+                multiline: False
+                size_hint_y: None
+                height: 40
+            Button:
+                text: "Login"
+                size_hint_y: None
+                height: 40
+                on_press: root.do_login()
+            Button:
+                text: "Forgot Password?"
+                size_hint_y: None
+                height: 35
+                on_press: root.goto_forgot()
+            Button:
+                text: "Register"
+                size_hint_y: None
+                height: 35
+                on_press: root.goto_register()
+
+<RegisterScreen>:
+    FloatLayout:
+        Label:
+            text: "Register Account"
+            font_size: 26
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: 0.5, 0.4
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 10
+            TextInput:
+                id: reg_username
+                hint_text: "Username"
+                multiline: False
+            TextInput:
+                id: reg_password
+                hint_text: "Password"
+                password: True
+                multiline: False
+            Button:
+                text: "Create Account"
+                on_press: root.do_register()
+            Button:
+                text: "Back"
+                on_press: root.manager.current = "login"
+
+<ForgotPasswordScreen>:
+    FloatLayout:
+        Label:
+            text: "Forgot Password"
+            font_size: 26
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
+        BoxLayout:
+            orientation: "vertical"
+            size_hint: 0.5, 0.35
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            spacing: 10
+            TextInput:
+                id: forgot_username
+                hint_text: "Enter username"
+                multiline: False
+            TextInput:
+                id: forgot_newpw
+                hint_text: "Enter new password"
+                password: True
+                multiline: False
+            Button:
+                text: "Reset Password"
+                on_press: root.reset_pw()
+            Button:
+                text: "Back"
+                on_press: root.manager.current = "login"
+
+<MenuScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 10
+        Label:
+            id: welcome_label
+            text: "Welcome"
+            font_size: 20
+        Label:
+            id: balance_label
+            text: "Balance: ₹0.00"
+            font_size: 18
+        Button:
+            text: "Add Balance"
+            on_press: root.manager.current = "add"
+        Button:
+            text: "Transfer Money"
+            on_press: root.manager.current = "transfer"
+        Button:
+            text: "View History / Export"
+            on_press:
+                app.sm.get_screen('history').load_history()
+                root.manager.current = "history"
+        Button:
+            text: "Logout"
+            on_press: app.logout()
+
+<AddBalanceScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 10
+        Label:
+            text: "Add Balance"
+            font_size: 22
+        TextInput:
+            id: add_amount
+            hint_text: "Amount (e.g., 1500)"
+            input_filter: "float"
+        TextInput:
+            id: add_label
+            hint_text: "Label (optional)"
+        BoxLayout:
+            spacing: 10
+            Button:
+                text: "Save"
+                on_press: root.save_balance()
+            Button:
+                text: "Back"
+                on_press: root.manager.current = "menu"
+
+<TransferScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 10
+        Label:
+            text: "Transfer Money"
+            font_size: 22
+        TextInput:
+            id: to_username
+            hint_text: "Recipient username"
+        TextInput:
+            id: transfer_amount
+            hint_text: "Amount"
+            input_filter: "float"
+        BoxLayout:
+            spacing: 10
+            Button:
+                text: "Send"
+                on_press: root.do_transfer()
+            Button:
+                text: "Back"
+                on_press: root.manager.current = "menu"
+
+<HistoryScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 10
+        spacing: 10
+        ScrollView:
+            GridLayout:
+                id: history_list
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+        BoxLayout:
+            size_hint_y: None
+            height: 48
+            spacing: 10
+            Button:
+                text: "Export CSV"
+                on_press: root.export_csv()
+            Button:
+                text: "Back"
+                on_press: root.manager.current = "menu"
